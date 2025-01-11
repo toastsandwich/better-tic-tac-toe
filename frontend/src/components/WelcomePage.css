@@ -1,0 +1,33 @@
+/* Button styling */
+.toggle-button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: 1px solid black;
+  background: white;
+  color: black;
+  cursor: pointer;
+  text-align: center;
+  width: 292px;
+}
+
+.toggle-button:hover {
+  background-color: #f0f0f0; /* Light grey on hover */
+}
+
+.welcome {
+  padding: 20px;
+}
+
+.welcome h1 {
+  font-size: 2.5em; /* Adjust size as needed */
+  color: black;
+  margin-bottom: 10px; /* Space below the title */
+}
+
+/* Special styling for the "you are playing against" paragraph */
+.welcome p:nth-child(3) {
+  font-size: 1.2em; /* Slightly larger than normal text */
+  color: #444;
+  margin-top: 80px;
+  font-weight: bold;
+}

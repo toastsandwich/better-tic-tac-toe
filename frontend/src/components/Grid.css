@@ -1,0 +1,27 @@
+.grid-container {
+  display: grid;
+  border: 1px solid black; /* Container border */
+  float: left; /* Position grid to the left */
+  padding: 4px;
+  margin-top: 30px;
+  margin-left: 100px;
+}
+
+.grid-container > div {
+  display: flex; /* Use flexbox for row alignment */
+}
+
+.grid-container button {
+  width: 80px; /* Match grid cell width */
+  height: 80px; /* Match grid cell height */
+  font-size: 24px; /* Smaller font size */
+  border: 1px solid black;
+  background-color: white;
+  color: black;
+  cursor: pointer;
+  padding: 0; /* Remove padding to ensure text is centered */
+}
+
+.grid-container button:hover {
+  background-color: #f0f0f0; /* Light grey on hover for interaction */
+}
