@@ -1,11 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
 import Swal from "sweetalert2";
+import { SetUser } from "../../store/reducers";
+import { useDispatch } from "react-redux";
 
-const Login = ({ setToken, setIsLoggedIn, setUser }) => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const dispatch = useDispatch();
   const submit = () => {
     axios
       .post("http://localhost:3001/api/login", {
@@ -14,18 +16,18 @@ const Login = ({ setToken, setIsLoggedIn, setUser }) => {
       })
       .then((resp) => {
         const { message, token, user } = resp.data;
-        if (message == "success") {
-          setToken(token);
-          setIsLoggedIn(true);
-          setUser(user);
-          console.log(resp.data);
+        if (message === "success") {
+          dispatch(SetUser({ ...user, token }));
         }
         Swal.fire({
           position: "top-right",
-          icon: "success",
           title: "login success",
           showConfirmButton: false,
           timer: 500,
+          width: "80%",
+          customClass: {
+            popup: "custom-height-modal",
+          },
         });
       })
       .catch((err) => {});
@@ -42,9 +44,7 @@ const Login = ({ setToken, setIsLoggedIn, setUser }) => {
         type="email"
         name="email"
         className="input-field"
-        onChange={(e) => {
-          setEmail(e.target.value);
-        }}
+        onChange={(e) => setEmail(e.target.value)}
       />
       <label htmlFor="password" className="label-password">
         Password
@@ -54,9 +54,7 @@ const Login = ({ setToken, setIsLoggedIn, setUser }) => {
         type="password"
         name="password"
         className="input-field"
-        onChange={(e) => {
-          setPassword(e.target.value);
-        }}
+        onChange={(e) => setPassword(e.target.value)}
       />
       <button type="button" className="btn-auth" onClick={submit}>
         Login

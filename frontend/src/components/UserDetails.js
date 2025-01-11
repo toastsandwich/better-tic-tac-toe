@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import "./UserDetails.css";
 const UserDetails = ({ user }) => {
   return (
@@ -25,7 +26,6 @@ const UserDetails = ({ user }) => {
         <label htmlFor="country_rank">Country Rank: </label>
         <span>{user.country_rank}</span>
       </div>
-      
     </div>
   );
 };

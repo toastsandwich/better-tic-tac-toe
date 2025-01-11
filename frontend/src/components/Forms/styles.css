@@ -52,3 +52,10 @@
 .btn-signup:hover {
   background-color: #f0f0f0;
 }
+
+.custom-height-modal {
+  height: 80px !important;
+  max-height: 80vh !important;
+  font-size: smaller;
+  color: green;
+}

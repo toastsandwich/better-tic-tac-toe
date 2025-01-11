@@ -4,17 +4,16 @@ import SignUp from "./Forms/SignUp";
 import "./WelcomePage.css";
 import Grid from "./Grid";
 import UserDetails from "./UserDetails";
-import axios from "axios";
+import { RemoveUser } from "../store/reducers";
+import { useDispatch, useSelector } from "react-redux";
 const WelcomePage = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginForm, setLoginForm] = useState(true);
-  const [playing, setPlaying] = useState(false); //why?
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState("");
+  const [playing, setPlaying] = useState(false);
   const toggle = () => {
     setLoginForm(!loginForm);
   };
-
+  const dispatch = useDispatch();
+  const { user, status } = useSelector((state) => state);
   return (
     <div className="welcome">
       <h1>Tic Tac Toe</h1>
@@ -23,22 +22,18 @@ const WelcomePage = () => {
       <Grid value={"O"} />
 
       <div style={{ textAlign: "right" }}>
-        {/* login/signup */}
         <div>
-          {isLoggedIn ? (
-            <UserDetails user={user} />
+          {status.isLoggedIn ? (
+            <>
+              <UserDetails user={user} />
+              <button className="toggle-button" onClick={dispatch(RemoveUser)}>
+                logout
+              </button>
+            </>
           ) : (
             <>
               <div style={{ display: "inline-block", textAlign: "left" }}>
-                {loginForm ? (
-                  <LoginForm
-                    setToken={setToken}
-                    setIsLoggedIn={setIsLoggedIn}
-                    setUser={setUser}
-                  />
-                ) : (
-                  <SignUp />
-                )}
+                {loginForm ? <LoginForm /> : <SignUp />}
               </div>
               <br />
               <button className="toggle-button" onClick={toggle}>
