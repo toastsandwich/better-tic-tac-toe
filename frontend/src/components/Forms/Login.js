@@ -9,6 +9,19 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const submit = () => {
+    if (!email || !password) {
+      Swal.fire({
+        position: "top-right",
+        title: "Please fill in all fields",
+        showConfirmButton: false,
+        timer: 500,
+        width: "80%",
+        customClass: {
+          popup: "custom-height-modal-fail",
+        },
+      });
+      return;
+    }
     axios
       .post("http://localhost:3001/api/login", {
         email: email,
@@ -17,7 +30,8 @@ const Login = () => {
       .then((resp) => {
         const { message, token, user } = resp.data;
         if (message === "success") {
-          dispatch(SetUser({ ...user, token }));
+          dispatch(SetUser({ ...user }));
+          localStorage.setItem("authtoken", token);
         }
         Swal.fire({
           position: "top-right",
@@ -26,11 +40,22 @@ const Login = () => {
           timer: 500,
           width: "80%",
           customClass: {
-            popup: "custom-height-modal",
+            popup: "custom-height-modal-success",
           },
         });
       })
-      .catch((err) => {});
+      .catch(() => {
+        Swal.fire({
+          position: "top-right",
+          title: "login fail",
+          showConfirmButton: false,
+          timer: 500,
+          width: "80%",
+          customClass: {
+            popup: "custom-height-modal-fail",
+          },
+        });
+      });
   };
 
   return (

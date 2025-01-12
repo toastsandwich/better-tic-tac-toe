@@ -3,10 +3,12 @@ import UserReducer, { initialState } from "./reducers";
 import { thunk } from "redux-thunk";
 
 const persistedUser = JSON.parse(localStorage.getItem("user"));
-const initialStoreState = persistedUser
-  ? { ...initialState, user: persistedUser }
-  : initialState;
-
+const isLoggedIn = !!persistedUser && persistedUser.token;
+const initialStoreState = {
+  ...initialState,
+  user: persistedUser || initialState.user,
+  status: isLoggedIn,
+};
 const store = createStore(
   UserReducer,
   initialStoreState,

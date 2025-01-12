@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import "./UserDetails.css";
 const UserDetails = ({ user }) => {
   return (

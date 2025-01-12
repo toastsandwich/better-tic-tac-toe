@@ -1,15 +1,11 @@
 const initialState = {
   user: {
-    token: "",
     country: "",
     username: "",
     global_rank: "",
     country_rank: "",
     wins: "",
     losses: "",
-  },
-  status: {
-    isLoggedIn: false,
   },
 };
 
@@ -19,7 +15,6 @@ const UserReducer = (state = initialState, action) => {
       return {
         ...state,
         user: { ...state.user, ...action.payload },
-        status: { isLoggedIn: true },
       };
     case "RM_USER":
       return initialState;
