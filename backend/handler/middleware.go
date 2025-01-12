@@ -6,13 +6,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		authToken := c.Request().Header.Get("Authorization")
 		if authToken == "" {
 			c.JSON(
 				http.StatusUnauthorized,
 				map[string]string{"error": "Authorization Header missing"},
+			)
+		}
+		if err := h.Service.CheckForBlacklistService(authToken); err != nil {
+			return c.JSON(
+				http.StatusUnauthorized,
+				map[string]string{"error": "Token is blacklisted"},
 			)
 		}
 		claims, err := ValidateJWTToken(authToken)

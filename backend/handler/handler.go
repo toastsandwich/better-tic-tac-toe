@@ -74,6 +74,26 @@ func (h *Handler) LoginHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]any{
 		"message": "success",
 		"token":   token,
-		"user":    user,
+		"user": struct {
+			Username    string `json:"username"`
+			Country     string `json:"country"`
+			Wins        int    `json:"wins"`
+			Losses      int    `json:"losses"`
+			GolbalRank  int    `json:"global_rank"`
+			CountryRank int    `json:"country_rank"`
+		}{
+			user.Username,
+			user.Country,
+			user.Wins,
+			user.Losses,
+			user.GlobalRanking,
+			user.CountryRank,
+		},
 	})
+}
+
+func (h *Handler) LogoutHandler(c echo.Context) error {
+	token := c.Request().Header.Get("Authorization")
+	h.Service.AddTokenToBlackListService(token)
+	return c.JSON(http.StatusOK, map[string]string{"message": "logout success"})
 }

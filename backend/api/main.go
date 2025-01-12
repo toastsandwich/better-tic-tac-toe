@@ -36,6 +36,7 @@ func main() {
 	api := e.Group("/api")
 
 	api.POST("/login", handler.LoginHandler)
+	api.POST("/logout", handler.LogoutHandler)
 	user := api.Group("/user")
 	user.GET("/get", handler.GetUserHandler)
 	user.POST("/create", handler.CreateUserHandler)

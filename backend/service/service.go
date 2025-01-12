@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/toastsandwich/networking-tic-tac-toe/model"
 	"github.com/toastsandwich/networking-tic-tac-toe/repository"
@@ -46,4 +47,13 @@ func (s *Service) GetUserService(email string) (*model.User, error) {
 
 func (s *Service) DeleteUserService(email string) error {
 	return s.Repository.DeleteUser([]byte(email))
+}
+
+func (s *Service) AddTokenToBlackListService(token string) error {
+	timenow := time.Now().Format(time.RFC3339)
+	return s.Repository.AddTokenToBlackList([]byte(token), []byte(timenow))
+}
+
+func (s *Service) CheckForBlacklistService(token string) error {
+	return s.Repository.FindToken([]byte(token))
 }
