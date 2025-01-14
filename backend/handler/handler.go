@@ -20,7 +20,7 @@ func NewHandler(service *service.Service) *Handler {
 
 func (h *Handler) GetUserHandler(c echo.Context) error {
 	email := c.QueryParams().Get("email")
-	if email != "" {
+	if email == "" {
 		return c.JSON(http.StatusUnprocessableEntity, map[string]string{"error": "email missing"})
 	}
 	user, err := h.Service.GetUserService(email)
@@ -45,6 +45,19 @@ func (h *Handler) CreateUserHandler(c echo.Context) error {
 func (h *Handler) DeleteUserHandler(c echo.Context) error {
 	email := c.QueryParams().Get("email")
 	return h.Service.DeleteUserService(email)
+}
+
+func (h *Handler) FindMatch(c echo.Context) error {
+	email := c.QueryParams().Get("email")
+	if email == "" || email == "undefined" {
+		return c.JSON(http.StatusUnprocessableEntity, map[string]string{"error": "email missing"})
+	}
+	user, err := h.Service.GetUserService(email)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "user not found"})
+	}
+	h.Service.AddToMatchMakingQueue(user)
+	return c.JSON(http.StatusOK, map[string]string{"data": "finding match"})
 }
 
 func (h *Handler) LoginHandler(c echo.Context) error {
@@ -75,6 +88,7 @@ func (h *Handler) LoginHandler(c echo.Context) error {
 		"message": "success",
 		"token":   token,
 		"user": struct {
+			Email       string `json:"email"`
 			Username    string `json:"username"`
 			Country     string `json:"country"`
 			Wins        int    `json:"wins"`
@@ -82,6 +96,7 @@ func (h *Handler) LoginHandler(c echo.Context) error {
 			GolbalRank  int    `json:"global_rank"`
 			CountryRank int    `json:"country_rank"`
 		}{
+			user.Email,
 			user.Username,
 			user.Country,
 			user.Wins,

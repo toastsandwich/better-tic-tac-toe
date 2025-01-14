@@ -3,6 +3,10 @@ const UserDetails = ({ user }) => {
   return (
     <div className="user-details-box">
       <div className="user-detail">
+        <label htmlFor="email">Email: </label>
+        <span>{user.email}</span>
+      </div>
+      <div className="user-detail">
         <label htmlFor="username">Username: </label>
         <span>{user.username}</span>
       </div>

@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import { SetUser } from "../../store/reducers";
 import { useDispatch } from "react-redux";
 
-const Login = () => {
+const Login = ({ isLoggedIn, setIsLoggedIn }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
@@ -32,6 +32,7 @@ const Login = () => {
         if (message === "success") {
           dispatch(SetUser({ ...user }));
           localStorage.setItem("authtoken", token);
+          setIsLoggedIn(true);
         }
         Swal.fire({
           position: "top-right",

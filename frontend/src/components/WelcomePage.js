@@ -6,39 +6,38 @@ import Grid from "./Grid";
 import UserDetails from "./UserDetails";
 import { useDispatch, useSelector } from "react-redux";
 import { RemoveUser } from "../store/reducers";
-
+import FindMatch from "./FindMatch.js";
 const WelcomePage = () => {
   const [loginForm, setLoginForm] = useState(true);
-  const [authToken, setAuthToken] = useState(null); // Changed to null for initial state
+  const [authToken, setAuthToken] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state); // Adjust based on your state structure
+  const { user } = useSelector((state) => state);
 
   useEffect(() => {
     const token = localStorage.getItem("authtoken");
-    setAuthToken(token); // This will set authToken immediately upon component mount
+    setAuthToken(token);
   }, [authToken]);
 
   const toggle = () => setLoginForm(!loginForm);
 
   const handleLogout = () => {
+    setIsLoggedIn(false);
     dispatch(RemoveUser());
     setAuthToken(null);
     localStorage.removeItem("authtoken");
   };
 
-  // Check for authToken to determine logged-in state
-  const isLoggedIn = authToken !== null;
-
   return (
     <div className="welcome">
       <h1>Tic Tac Toe</h1>
       <p>Play with real world players, be the best and climb up the ranks</p>
-      <p>you are playing against : </p>
+      <FindMatch user={user} />
       <Grid value={"O"} />
 
       <div style={{ textAlign: "right" }}>
         <div>
-          {isLoggedIn ? (
+          {authToken ? (
             <>
               <UserDetails user={user} />
               <button className="toggle-button" onClick={handleLogout}>
@@ -48,7 +47,14 @@ const WelcomePage = () => {
           ) : (
             <>
               <div style={{ display: "inline-block", textAlign: "left" }}>
-                {loginForm ? <LoginForm /> : <SignUp />}
+                {loginForm ? (
+                  <LoginForm
+                    isLoggedIn={isLoggedIn}
+                    setIsLoggedIn={setIsLoggedIn}
+                  />
+                ) : (
+                  <SignUp />
+                )}
               </div>
               <br />
               <button className="toggle-button" onClick={toggle}>

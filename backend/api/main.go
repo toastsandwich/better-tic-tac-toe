@@ -33,10 +33,17 @@ func main() {
 	)
 	e.Validator = validator // Validator
 
+	go func() {
+		for m := range service.GetMatches() {
+			m.Start()
+		}
+	}()
+
 	api := e.Group("/api")
 
 	api.POST("/login", handler.LoginHandler)
 	api.POST("/logout", handler.LogoutHandler)
+	api.POST("/findMatch", handler.FindMatch)
 	user := api.Group("/user")
 	user.GET("/get", handler.GetUserHandler)
 	user.POST("/create", handler.CreateUserHandler)

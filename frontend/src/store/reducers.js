@@ -1,5 +1,6 @@
 const initialState = {
   user: {
+    email: "",
     country: "",
     username: "",
     global_rank: "",
