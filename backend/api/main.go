@@ -33,6 +33,7 @@ func main() {
 	)
 	e.Validator = validator // Validator
 
+	// start a go routine for the match maker
 	go func() {
 		for m := range service.GetMatches() {
 			m.Start()
