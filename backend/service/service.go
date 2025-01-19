@@ -5,30 +5,18 @@ import (
 	"fmt"
 	"time"
 
-	matchmaker "github.com/toastsandwich/networking-tic-tac-toe/match_maker"
 	"github.com/toastsandwich/networking-tic-tac-toe/model"
 	"github.com/toastsandwich/networking-tic-tac-toe/repository"
 )
 
 type Service struct {
 	Repository *repository.Repository
-	MatchMaker *matchmaker.MatchMaker
 }
 
 func NewService(repository *repository.Repository) *Service {
-	mm := matchmaker.NewMatchMaker()
 	return &Service{
 		Repository: repository,
-		MatchMaker: mm,
 	}
-}
-
-func (s *Service) AddToMatchMakingQueue(u *model.User) {
-	s.MatchMaker.AddToQ(u)
-}
-
-func (s *Service) GetMatches() <-chan matchmaker.Match {
-	return s.MatchMaker.GetMatches()
 }
 
 func (s *Service) CreateUserService(user *model.User) error {

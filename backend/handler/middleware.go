@@ -10,7 +10,7 @@ func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		authToken := c.Request().Header.Get("Authorization")
 		if authToken == "" {
-			c.JSON(
+			return c.JSON(
 				http.StatusUnauthorized,
 				map[string]string{"error": "Authorization Header missing"},
 			)
@@ -23,7 +23,7 @@ func (h *Handler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 		claims, err := ValidateJWTToken(authToken)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, map[string]string{"error": err.Error()})
+			return c.JSON(http.StatusUnauthorized, map[string]string{"error": err.Error()})
 		}
 		c.Set("user", claims)
 		return next(c)

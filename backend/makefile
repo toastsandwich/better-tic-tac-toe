@@ -1,5 +1,8 @@
 run:
-	@go run ./api/main.go
+	@go run ./api/*.go
+
+connect:
+	@./scripts/connect.sh
 
 test:
 	@go test ./...

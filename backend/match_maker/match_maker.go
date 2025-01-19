@@ -1,60 +1,48 @@
 package matchmaker
 
 import (
-	"fmt"
-	"math/rand"
 	"sync"
-	"time"
 
-	"github.com/toastsandwich/networking-tic-tac-toe/model"
+	"golang.org/x/net/websocket"
 )
 
-type Match struct {
-	X, O *model.User // both players
-	// G    [3][3]rune // grid Grid will be added later, right now lets add duration to test the button and match
-	Duration time.Duration
+type Match map[*websocket.Conn]*websocket.Conn
+
+func (m *Match) Prepare(first, second *websocket.Conn) {
+	(*m)[first] = second
 }
 
-func (m *Match) Start() {
-	fmt.Printf("match started between %s and %s.\n", m.X.Username, m.O.Username)
-	time.Sleep(m.Duration)
-	fmt.Printf("match ended between %s and %s.\n", m.X.Username, m.O.Username)
+func (m *Match) Play() {
 }
 
 type MatchMaker struct {
-	Q       []*model.User
-	Matches chan Match
 	mu      sync.Mutex
+	Queue   []*websocket.Conn
+	Matches chan *Match
 }
 
 func NewMatchMaker() *MatchMaker {
 	return &MatchMaker{
-		Q:       make([]*model.User, 0),
-		Matches: make(chan Match),
 		mu:      sync.Mutex{},
+		Queue:   make([]*websocket.Conn, 0),
+		Matches: make(chan *Match),
 	}
 }
 
-func (mm *MatchMaker) AddToQ(u *model.User) {
+func (mm *MatchMaker) tryPair() {
+	if len(mm.Queue) >= 2 {
+		f := mm.Queue[0]
+		s := mm.Queue[1]
+		mm.Queue = mm.Queue[2:]
+		match := make(Match)
+		match.Prepare(f, s)
+		mm.Matches <- &match
+	}
+}
+
+func (mm *MatchMaker) IncomingConn(wc *websocket.Conn) {
 	mm.mu.Lock()
-	mm.Q = append(mm.Q, u)
-	mm.tryMatch()
+	mm.Queue = append(mm.Queue, wc)
+	mm.tryPair()
 	mm.mu.Unlock()
-}
-
-func (mm *MatchMaker) tryMatch() {
-	if len(mm.Q) >= 2 {
-		t := rand.Intn(15) + 10
-		match := Match{
-			X:        mm.Q[0],
-			O:        mm.Q[1],
-			Duration: time.Duration(t) * time.Second,
-		}
-		mm.Q = mm.Q[2:]
-		mm.Matches <- match
-	}
-}
-
-func (mm *MatchMaker) GetMatches() <-chan Match {
-	return mm.Matches
 }

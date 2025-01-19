@@ -4,19 +4,28 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	matchmaker "github.com/toastsandwich/networking-tic-tac-toe/match_maker"
 	"github.com/toastsandwich/networking-tic-tac-toe/model"
 	"github.com/toastsandwich/networking-tic-tac-toe/service"
 )
 
 type Handler struct {
-	Service *service.Service
+	Service    *service.Service
+	MatchMaker *matchmaker.MatchMaker
 }
 
-func NewHandler(service *service.Service) *Handler {
+func NewHandler(service *service.Service, matchmaker *matchmaker.MatchMaker) *Handler {
 	return &Handler{
-		Service: service,
+		Service:    service,
+		MatchMaker: matchmaker,
 	}
 }
+
+// func (h *Handler) MatchHandler(c echo.Context) error {
+// 	websocket.Handler(func(c *websocket.Conn) {
+// 		h.MatchMaker.IncomingConn(c)
+// 	}).ServeHTTP(c.Response(), c.Request())
+// }
 
 func (h *Handler) GetUserHandler(c echo.Context) error {
 	email := c.QueryParams().Get("email")
@@ -45,19 +54,6 @@ func (h *Handler) CreateUserHandler(c echo.Context) error {
 func (h *Handler) DeleteUserHandler(c echo.Context) error {
 	email := c.QueryParams().Get("email")
 	return h.Service.DeleteUserService(email)
-}
-
-func (h *Handler) FindMatch(c echo.Context) error {
-	email := c.QueryParams().Get("email")
-	if email == "" || email == "undefined" {
-		return c.JSON(http.StatusUnprocessableEntity, map[string]string{"error": "email missing"})
-	}
-	user, err := h.Service.GetUserService(email)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "user not found"})
-	}
-	h.Service.AddToMatchMakingQueue(user)
-	return c.JSON(http.StatusOK, map[string]string{"data": "finding match"})
 }
 
 func (h *Handler) LoginHandler(c echo.Context) error {
