@@ -1,12 +1,19 @@
 import { useState } from "react";
+import Client from "../client/game_client";
 import "./Grid.css";
 
-const Cell = ({ value }) => {
+const client = new Client("127.0.0.1", ":3002");
+
+const Cell = ({ value, i, j }) => {
   const [place, setPlace] = useState("");
   const [disable, setDisable] = useState(false);
+
   const onClick = () => {
-    setDisable(true);
-    setPlace(value);
+    if (value !== undefined || value !== "") {
+      setDisable(true);
+      setPlace(value);
+      client.sendMove(i, j);
+    }
   };
   return (
     <button onClick={onClick} disabled={disable}>
@@ -19,19 +26,19 @@ const Grid = ({ value }) => {
   return (
     <div className="grid-container">
       <div>
-        <Cell value={value} />
-        <Cell value={value} />
-        <Cell value={value} />
+        <Cell value={value} i={0} j={0} />
+        <Cell value={value} i={0} j={1} />
+        <Cell value={value} i={0} j={2} />
       </div>
       <div>
-        <Cell value={value} />
-        <Cell value={value} />
-        <Cell value={value} />
+        <Cell value={value} i={1} j={0} />
+        <Cell value={value} i={1} j={1} />
+        <Cell value={value} i={1} j={2} />
       </div>
       <div>
-        <Cell value={value} />
-        <Cell value={value} />
-        <Cell value={value} />
+        <Cell value={value} i={2} j={0} />
+        <Cell value={value} i={2} j={1} />
+        <Cell value={value} i={2} j={2} />
       </div>
     </div>
   );

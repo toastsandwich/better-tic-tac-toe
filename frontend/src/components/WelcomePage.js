@@ -7,10 +7,12 @@ import UserDetails from "./UserDetails";
 import { useDispatch, useSelector } from "react-redux";
 import { RemoveUser } from "../store/reducers";
 import FindMatch from "./FindMatch.js";
+import axios from "axios";
 const WelcomePage = () => {
   const [loginForm, setLoginForm] = useState(true);
   const [authToken, setAuthToken] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [gameSide, setGameSide] = useState("");
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state);
 
@@ -22,18 +24,33 @@ const WelcomePage = () => {
   const toggle = () => setLoginForm(!loginForm);
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
-    dispatch(RemoveUser());
-    setAuthToken(null);
-    localStorage.removeItem("authtoken");
+    axios
+      .post(
+        "http://localhost:3001/api/logout",
+        {},
+        {
+          headers: {
+            Authorization: authToken,
+          },
+        }
+      )
+      .then(() => {
+        setIsLoggedIn(false);
+        dispatch(RemoveUser());
+        setAuthToken(null);
+        localStorage.removeItem("authtoken");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   return (
     <div className="welcome">
       <h1>Tic Tac Toe</h1>
       <p>Play with real world players, be the best and climb up the ranks</p>
-      <FindMatch user={user} />
-      <Grid value={"O"} />
+      <FindMatch user={user} setGameSide={setGameSide} token={authToken} />
+      <Grid value={gameSide} />
 
       <div style={{ textAlign: "right" }}>
         <div>

@@ -1,13 +1,24 @@
 import "./WelcomePage.css";
 import axios from "axios";
-const FindMatch = ({ user }) => {
+const FindMatch = ({ user, setGameSide, token }) => {
   const onClick = () => {
     const email = user.email;
     axios
-      .post(`http://localhost:3001/api/findMatch?email=${email}`)
+      .post(
+        `http://localhost:3001/api/findMatch`,
+        {
+          email: email,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      )
       .then((resp) => {
         if (resp.data) {
-          console.log(resp.data);
+          console.log(resp.data.face);
+          setGameSide(resp.data.face);
         }
       })
       .catch((err) => {
